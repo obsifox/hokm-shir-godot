@@ -1,0 +1,36 @@
+; Engine configuration file.
+config_version=5
+
+[application]
+
+config/name="Hokm Shir"
+config/name_fa="حکم شیر"
+config/description="بازی سنتی حکم ایرانی با حالت کلاسیک و فانتزی — ساخته شده با Godot"
+run/main_scene="res://src/scenes/main_menu.tscn"
+config/features=PackedStringArray("4.3")
+boot_splash/bg_color=Color(0.043, 0.09, 0.22, 1)
+config/icon="res://assets/back_classic.png"
+
+[autoload]
+
+S="*res://src/core/globals.gd"
+Snd="*res://src/ui/audio_manager.gd"
+Net="*res://src/net/net_sync.gd"
+
+[display]
+
+window/size/viewport_width=1080
+window/size/viewport_height=1920
+window/handheld/orientation=1
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
+
+[rendering]
+
+renderer/rendering_method="mobile"
+textures/vram_compression/import_etc2_astc=true
+environment/defaults/default_clear_color=Color(0.043, 0.09, 0.22, 1)
