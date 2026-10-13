@@ -6,7 +6,7 @@ var body: Control
 var status_l: Label
 var players_box: VBoxContainer
 var rooms_box: VBoxContainer
-var start_btn: TextureButton
+var start_btn: Button
 var scan_l: Label
 var ip_edit: LineEdit
 
@@ -22,25 +22,25 @@ func _ready() -> void:
     add_child(UIH.dim_overlay(0.5))
 
     var t := UIH.label("بازی چندنفره (هات‌اسپات)", 60, UIH.GOLD, "Black", 8)
-    t.position = Vector2(90, 200)
+    t.position = Vector2(UIH.cx() - 450, UIH.vsize().y * 0.104)
     t.size = Vector2(900, 90)
     add_child(t)
 
     var info := UIH.label("هر دو گوشی باید به یک وای‌فای یا هات‌اسپات یکسان وصل باشند", 30, UIH.INK, "Medium")
-    info.position = Vector2(90, 300)
+    info.position = Vector2(UIH.cx() - 450, UIH.vsize().y * 0.156)
     info.size = Vector2(900, 50)
     add_child(info)
 
     var row := HBoxContainer.new()
     row.add_theme_constant_override("separation", 30)
-    row.position = Vector2(90, 420)
+    row.position = Vector2(UIH.cx() - 450, UIH.vsize().y * 0.219)
     row.custom_minimum_size = Vector2(900, 0)
     add_child(row)
     row.add_child(UIH.text_btn("ساخت میز", Vector2(435, 130), func(): _host(), 40, true))
     row.add_child(UIH.text_btn("پیوستن به میز", Vector2(435, 130), func(): _join_mode(), 40, true))
 
     status_l = UIH.label("", 32, UIH.GOLD_DIM, "Bold")
-    status_l.position = Vector2(90, 590)
+    status_l.position = Vector2(UIH.cx() - 450, UIH.vsize().y * 0.307)
     status_l.size = Vector2(900, 50)
     add_child(status_l)
 
@@ -56,7 +56,9 @@ func _ready() -> void:
     Net.cmd_received.connect(_on_net_cmd)
     Net.lobby_changed.connect(_refresh_host_list)
     Net.rooms_changed.connect(_refresh_rooms)
-    Net.joined_ok.connect(func(): _set_status("وصل شدی! منتظر شروع بازی توسط میزبان..."))
+    Net.joined_ok.connect(func():
+        Snd.sfx("join", 1.0, -4.0)
+        _set_status("وصل شدی! منتظر شروع بازی توسط میزبان..."))
     Net.join_failed.connect(func(r: String): _set_status("خطا: " + r))
     Net.server_lost.connect(func():
         _set_status("ارتباط با میزبان قطع شد")
@@ -78,6 +80,7 @@ func _host() -> void:
     if not Net.start_host(S.player_name):
         _set_status("ساخت میز ممکن نشد؛ دوباره تلاش کن")
         return
+    Snd.sfx("join", 1.0, -6.0)
     mode = "host"
     _set_status("میز ساخته شد — منتظر بازیکن‌ها...")
     _build_host_ui()
@@ -88,20 +91,20 @@ func _build_host_ui() -> void:
     for c in body.get_children():
         c.queue_free()
     var pl := UIH.label("بازیکن‌های میز:", 40, UIH.GOLD, "Black")
-    pl.position = Vector2(90, 700)
+    pl.position = Vector2(UIH.cx() - 450, UIH.vsize().y * 0.365)
     pl.size = Vector2(900, 60)
     body.add_child(pl)
     players_box = VBoxContainer.new()
     players_box.add_theme_constant_override("separation", 14)
-    players_box.position = Vector2(140, 780)
+    players_box.position = Vector2(UIH.cx() - 400, UIH.vsize().y * 0.406)
     players_box.custom_minimum_size = Vector2(800, 0)
     body.add_child(players_box)
     var note := UIH.label("صندلی‌های خالی با هوش مصنوعی (سطح «بازیکن») پر می‌شوند", 26, UIH.INK, "Medium")
-    note.position = Vector2(90, 1140)
+    note.position = Vector2(UIH.cx() - 450, UIH.vsize().y * 0.594)
     note.size = Vector2(900, 44)
     body.add_child(note)
     start_btn = UIH.text_btn("شروع بازی", Vector2(600, 140), func(): _start_game(), 44, true)
-    start_btn.position = Vector2(240, 1560)
+    start_btn.position = Vector2(UIH.cx() - 300, UIH.vsize().y - 360)
     start_btn.disabled = true
     body.add_child(start_btn)
 
@@ -153,28 +156,28 @@ func _join_mode() -> void:
     for c in body.get_children():
         c.queue_free()
     var rl := UIH.label("میزهای پیدا شده:", 40, UIH.GOLD, "Black")
-    rl.position = Vector2(90, 700)
+    rl.position = Vector2(UIH.cx() - 450, UIH.vsize().y * 0.365)
     rl.size = Vector2(900, 60)
     body.add_child(rl)
     rooms_box = VBoxContainer.new()
     rooms_box.add_theme_constant_override("separation", 16)
-    rooms_box.position = Vector2(140, 780)
+    rooms_box.position = Vector2(UIH.cx() - 400, UIH.vsize().y * 0.406)
     rooms_box.custom_minimum_size = Vector2(800, 0)
     body.add_child(rooms_box)
     var ml := UIH.label("یا ورود دستی با IP (مثلاً 192.168.43.1):", 30, UIH.INK, "Bold")
-    ml.position = Vector2(90, 1180)
+    ml.position = Vector2(UIH.cx() - 450, UIH.vsize().y * 0.615)
     ml.size = Vector2(900, 46)
     body.add_child(ml)
     ip_edit = LineEdit.new()
     ip_edit.text = "192.168.43.1"
-    ip_edit.position = Vector2(140, 1240)
+    ip_edit.position = Vector2(UIH.cx() - 400, UIH.vsize().y * 0.646)
     ip_edit.size = Vector2(500, 66)
     ip_edit.add_theme_font_override("font", UIH.font("Bold"))
     ip_edit.add_theme_font_size_override("font_size", 30)
     ip_edit.alignment = HORIZONTAL_ALIGNMENT_CENTER
     body.add_child(ip_edit)
     var jb := UIH.text_btn("ورود", Vector2(220, 66), func(): _join_ip(), 30, true)
-    jb.position = Vector2(680, 1240)
+    jb.position = Vector2(UIH.cx() + 140, UIH.vsize().y * 0.646)
     body.add_child(jb)
     _refresh_rooms()
 

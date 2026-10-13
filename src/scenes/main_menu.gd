@@ -20,7 +20,7 @@ func _ready() -> void:
 
     # decorative joker card, gently floating
     var deco := UIH.tex_rect("res://assets/joker.png", Vector2(300, 450))
-    deco.position = Vector2(700, 240)
+    deco.position = Vector2(UIH.vsize().x - 380, 240)
     deco.rotation_degrees = 10
     deco.modulate = Color(1, 1, 1, 0.9)
     add_child(deco)
@@ -30,7 +30,7 @@ func _ready() -> void:
     tw.tween_property(deco, "position:y", 240.0, 2.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
     var title := UIH.label("حکم شیر", 150, UIH.GOLD, "Black", 14)
-    title.position = Vector2(90, 320)
+    title.position = Vector2(UIH.cx() - 450, UIH.vsize().y * 0.167)
     title.size = Vector2(900, 180)
     add_child(title)
     title.pivot_offset = Vector2(450, 90)
@@ -39,13 +39,13 @@ func _ready() -> void:
     tt.tween_property(title, "scale", Vector2.ONE, 0.6).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 
     var sub := UIH.label("بازی سنتی حکم — کلاسیک، فانتزی و آنلاینِ محلی", 34, UIH.INK, "Medium")
-    sub.position = Vector2(90, 500)
+    sub.position = Vector2(UIH.cx() - 450, UIH.vsize().y * 0.26)
     sub.size = Vector2(900, 50)
     add_child(sub)
 
     var box := VBoxContainer.new()
     box.add_theme_constant_override("separation", 30)
-    box.position = Vector2(240, 700)
+    box.position = Vector2(UIH.cx() - 300, UIH.vsize().y * 0.365)
     box.custom_minimum_size = Vector2(600, 0)
     add_child(box)
 
@@ -55,7 +55,7 @@ func _ready() -> void:
     box.add_child(UIH.text_btn("تنظیمات", Vector2(600, 120), func(): _open_settings(), 38, false))
 
     version_l = UIH.label("نسخه ۱.۰ — ساخته‌شده با Godot", 24, Color(1, 1, 1, 0.45), "Medium")
-    version_l.position = Vector2(290, 1830)
+    version_l.position = Vector2(UIH.cx() - 250, UIH.vsize().y - 90)
     version_l.size = Vector2(500, 40)
     add_child(version_l)
 
@@ -76,13 +76,14 @@ func _show_level_picker(mode: String, count: int) -> void:
     _close_overlays()
     mode_overlay = UIH.dim_overlay(0.75)
     add_child(mode_overlay)
+    Snd.sfx("open", 1.0, -8.0)
     var t := UIH.label("سطح هوش مصنوعی را انتخاب کن", 48, UIH.GOLD, "Black")
-    t.position = Vector2(90, 380)
+    t.position = Vector2(UIH.cx() - 450, UIH.vsize().y * 0.198)
     t.size = Vector2(900, 70)
     mode_overlay.add_child(t)
     var box := VBoxContainer.new()
     box.add_theme_constant_override("separation", 22)
-    box.position = Vector2(140, 500)
+    box.position = Vector2(UIH.cx() - 400, UIH.vsize().y * 0.26)
     box.custom_minimum_size = Vector2(800, 0)
     mode_overlay.add_child(box)
     var descs := [
@@ -97,7 +98,7 @@ func _show_level_picker(mode: String, count: int) -> void:
             func(): _start(mode, count, lv), 32, lv % 2 == 0)
         box.add_child(row)
     var back := UIH.text_btn("بازگشت", Vector2(300, 90), func(): _close_overlays(), 30, false)
-    back.position = Vector2(390, 1560)
+    back.position = Vector2(UIH.cx() - 150, UIH.vsize().y - 330)
     mode_overlay.add_child(back)
 
 
@@ -105,25 +106,26 @@ func _show_count_picker() -> void:
     _close_overlays()
     mode_overlay = UIH.dim_overlay(0.75)
     add_child(mode_overlay)
+    Snd.sfx("open", 1.0, -8.0)
     var t := UIH.label("چند نفره بازی می‌کنی؟", 48, UIH.GOLD, "Black")
-    t.position = Vector2(90, 420)
+    t.position = Vector2(UIH.cx() - 450, UIH.vsize().y * 0.219)
     t.size = Vector2(900, 70)
     mode_overlay.add_child(t)
     var row := HBoxContainer.new()
     row.add_theme_constant_override("separation", 20)
-    row.position = Vector2(90, 580)
+    row.position = Vector2(UIH.cx() - 450, UIH.vsize().y * 0.302)
     row.custom_minimum_size = Vector2(900, 0)
     mode_overlay.add_child(row)
     for n in range(4, 9):
         var b := UIH.text_btn(S.fa(n), Vector2(160, 160), func(): _show_level_picker("fantasy", n), 52, n % 2 == 0)
         row.add_child(b)
     var info := UIH.label("در حالت فانتزی، هر بازیکن یک کارت ویژه می‌گیرد و ایونت‌های تکاملی فعال می‌شوند", 28, UIH.INK, "Medium")
-    info.position = Vector2(90, 820)
+    info.position = Vector2(UIH.cx() - 450, UIH.vsize().y * 0.427)
     info.size = Vector2(900, 80)
     info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
     mode_overlay.add_child(info)
     var back := UIH.text_btn("بازگشت", Vector2(300, 90), func(): _close_overlays(), 30, false)
-    back.position = Vector2(390, 1560)
+    back.position = Vector2(UIH.cx() - 150, UIH.vsize().y - 330)
     mode_overlay.add_child(back)
 
 
@@ -138,6 +140,7 @@ func _start(mode: String, count: int, level: int) -> void:
 func _open_settings() -> void:
     if settings_panel != null:
         return
+    Snd.sfx("open", 1.0, -8.0)
     settings_panel = UIH.dim_overlay(0.75)
     add_child(settings_panel)
     var panel := Panel.new()
@@ -145,7 +148,8 @@ func _open_settings() -> void:
     sb.bg_color = Color(0.08, 0.11, 0.24, 0.97)
     sb.set_corner_radius_all(40)
     panel.add_theme_stylebox_override("panel", sb)
-    panel.position = Vector2(120, 380)
+    var vs := UIH.vsize()
+    panel.position = Vector2((vs.x - 840) * 0.5, maxf(40.0, (vs.y - 1160) * 0.5 - 20.0))
     panel.size = Vector2(840, 1160)
     settings_panel.add_child(panel)
 
@@ -211,9 +215,14 @@ func _open_settings() -> void:
 
 
 func _close_overlays() -> void:
+    var closed := false
     if mode_overlay != null:
         mode_overlay.queue_free()
         mode_overlay = null
+        closed = true
     if settings_panel != null:
         settings_panel.queue_free()
         settings_panel = null
+        closed = true
+    if closed:
+        Snd.sfx("close", 1.0, -10.0)

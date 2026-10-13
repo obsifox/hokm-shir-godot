@@ -16,7 +16,7 @@ var cooldown := false
 
 
 func _ready() -> void:
-	position = Vector2(30, 1450)
+	position = Vector2(24, UIH.vsize().y - 470)
 	size = Vector2(400, 420)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 

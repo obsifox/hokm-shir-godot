@@ -40,12 +40,12 @@ func _ready() -> void:
 	add_child(sound_btn)
 
 	var menu_btn := UIH.icon_btn("res://assets/btn/btn_setting.png", 86, func(): menu_pressed.emit())
-	menu_btn.position = Vector2(970, 16)
+	menu_btn.position = Vector2(UIH.vsize().x - 110, 16)
 	add_child(menu_btn)
 
 	center_box = VBoxContainer.new()
 	center_box.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	center_box.position = Vector2(540 - 180, 6)
+	center_box.position = Vector2(UIH.cx() - 180, 6)
 	center_box.custom_minimum_size = Vector2(360, 0)
 	center_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(center_box)

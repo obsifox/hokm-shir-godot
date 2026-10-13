@@ -69,7 +69,10 @@ func show_banner(title: String, desc: String, icon_path := "", dur := 2.2, big :
 	else:
 		icon.visible = false
 	panel.reset_size()
+	var vs := UIH.vsize()
+	panel.position = (vs - panel.size) * 0.5 + Vector2(0, -vs.y * 0.05)
 	panel.pivot_offset = panel.size / 2.0
+	Snd.sfx("banner", 1.0, -8.0)
 	visible = true
 	panel.scale = Vector2(0.5, 0.5)
 	panel.modulate = Color(1, 1, 1, 0)
@@ -90,7 +93,7 @@ func show_big_text(text: String, color := UIH.GOLD, dur := 1.6) -> void:
 	visible = true
 	var l := UIH.label(text, 120, color, "Black", 10)
 	l.set_anchors_preset(Control.PRESET_CENTER)
-	l.position = Vector2(540 - 400, 872 - 100)
+	l.position = Vector2(UIH.cx() - 400, UIH.vsize().y * 0.454 - 100)
 	l.size = Vector2(800, 200)
 	l.pivot_offset = Vector2(400, 100)
 	l.scale = Vector2(0.3, 0.3)

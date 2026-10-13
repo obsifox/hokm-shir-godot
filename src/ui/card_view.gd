@@ -2,7 +2,8 @@ class_name CardView
 extends Node2D
 ## Visual card: front + back + soft shadow, flip & fly animations.
 
-const CARD_SIZE := Vector2(240, 360)
+static func size_px() -> Vector2:
+	return Vector2(240, 360) * UIH.us()
 
 var front: Sprite2D
 var back: Sprite2D
@@ -48,7 +49,8 @@ func _scale_sprite(spr: Sprite2D, t: Texture2D) -> void:
 		return
 	spr.texture = t
 	var ts: Vector2 = t.get_size()
-	var k: float = min(CARD_SIZE.x / ts.x, CARD_SIZE.y / ts.y)
+	var cs: Vector2 = size_px()
+	var k: float = min(cs.x / ts.x, cs.y / ts.y)
 	spr.scale = Vector2(k, k)
 
 

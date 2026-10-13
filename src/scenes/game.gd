@@ -95,7 +95,7 @@ func _build_scene() -> void:
     _build_sp_slot()
 
     toast_l = UIH.label("", 34, UIH.INK, "Bold", 5)
-    toast_l.position = Vector2(540 - 400, 1150)
+    toast_l.position = Vector2(UIH.cx() - 400, UIH.vsize().y * 0.56)
     toast_l.size = Vector2(800, 50)
     toast_l.modulate.a = 0.0
     add_child(toast_l)
@@ -103,8 +103,8 @@ func _build_scene() -> void:
 
 func _build_sp_slot() -> void:
     sp_slot = Control.new()
-    sp_slot.position = Vector2(820, 1540)
-    sp_slot.size = Vector2(200, 300)
+    sp_slot.position = Vector2(UIH.vsize().x - 260.0 * UIH.us(), UIH.vsize().y - 380.0 * UIH.us())
+    sp_slot.size = Vector2(200, 300) * UIH.us()
     sp_slot.mouse_filter = Control.MOUSE_FILTER_STOP
     sp_slot.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
     sp_slot.visible = false
@@ -157,9 +157,10 @@ func _build_avatars() -> void:
 
 func _avatar_position(rel: int, n: int) -> Vector2:
     var d := trick_area.seat_dir(rel, n)
-    var pos := Vector2(540 + d.x * 500.0, 880 + d.y * 690.0)
-    pos.x = clampf(pos.x, 150.0, 930.0)
-    pos.y = clampf(pos.y, 200.0, 1400.0)
+    var vs := UIH.vsize()
+    var pos := Vector2(UIH.cx() + d.x * vs.x * 0.463, vs.y * 0.454 + d.y * vs.y * 0.359)
+    pos.x = clampf(pos.x, vs.x * 0.14, vs.x * 0.86)
+    pos.y = clampf(pos.y, vs.y * 0.104, vs.y - 520.0 * UIH.us())
     pos -= AvatarView.SIZE / 2.0
     pos.y -= 20.0
     return pos
@@ -197,11 +198,12 @@ func _on_sound_toggle() -> void:
 func _on_pause() -> void:
     if pause_menu != null:
         return
+    Snd.sfx("open", 1.0, -8.0)
     pause_menu = UIH.dim_overlay(0.7)
     add_child(pause_menu)
     var box := VBoxContainer.new()
     box.add_theme_constant_override("separation", 26)
-    box.position = Vector2(540 - 220, 640)
+    box.position = Vector2(UIH.cx() - 220, UIH.vsize().y * 0.333)
     box.custom_minimum_size = Vector2(440, 0)
     pause_menu.add_child(box)
     var t := UIH.label("توقف", 60, UIH.GOLD, "Black")
@@ -216,6 +218,7 @@ func _on_pause() -> void:
 
 func _close_pause() -> void:
     if pause_menu != null:
+        Snd.sfx("close", 1.0, -10.0)
         pause_menu.queue_free()
         pause_menu = null
 
@@ -229,7 +232,7 @@ func _quit_to_menu() -> void:
 func _avatar_center(seat: int) -> Vector2:
     if avatars.has(seat):
         return avatars[seat].position + AvatarView.SIZE / 2.0
-    return Vector2(540, 1600)
+    return Vector2(UIH.cx(), UIH.vsize().y - 320)
 
 
 func _refresh_scores() -> void:
@@ -475,6 +478,7 @@ func _await_local_hokm() -> int:
 
 
 func _show_hokm_picker() -> void:
+    Snd.sfx("open", 1.0, -8.0)
     fan.set_input_enabled(false)
     var picker := HokmPicker.new(state.players[my_seat].hand)
     add_child(picker)
@@ -754,7 +758,7 @@ func _v_play(seat: int, card: GameCard, from_self: bool) -> void:
         if not info.is_empty():
             from_pos = info.pos
         else:
-            from_pos = Vector2(540, 1750)
+            from_pos = Vector2(UIH.cx(), UIH.vsize().y - 170)
         fan.set_input_enabled(false)
     else:
         from_pos = _avatar_center(seat)

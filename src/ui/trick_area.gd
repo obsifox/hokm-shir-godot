@@ -4,7 +4,8 @@ extends Node2D
 
 signal anim_done
 
-const CENTER := Vector2(540, 872)
+func center() -> Vector2:
+    return Vector2(UIH.cx(), UIH.vsize().y * 0.454)
 
 var entries: Array = []  # {seat, card, view}
 var host: Node
@@ -25,12 +26,13 @@ func seat_dir(seat: int, n: int) -> Vector2:
 
 
 func slot_pos(seat: int, n: int) -> Vector2:
-    return CENTER + seat_dir(seat, n) * 235.0
+    return center() + seat_dir(seat, n) * 235.0 * UIH.us()
 
 
 func avatar_pos(seat: int, n: int) -> Vector2:
     var d := seat_dir(seat, n)
-    return CENTER + Vector2(d.x * 500.0, d.y * 700.0)
+    var vs := UIH.vsize()
+    return center() + Vector2(d.x * vs.x * 0.463, d.y * vs.y * 0.365)
 
 
 ## Spawns a card flying in from from_pos (global design coords) to the slot.
@@ -47,6 +49,8 @@ func play_card(seat: int, card: GameCard, from_pos: Vector2, face_up := true, fl
     tw.tween_property(v, "position", target, 0.34).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
     tw.tween_property(v, "scale", Vector2(0.86, 0.86), 0.34)
     tw.tween_property(v, "rotation", randf_range(-0.09, 0.09), 0.34)
+    tw.chain().tween_property(v, "scale", Vector2(0.9, 0.9), 0.05).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+    tw.tween_property(v, "scale", Vector2(0.86, 0.86), 0.08)
     if face_up and (flip_from_back or not v.face_up):
         tw.chain().tween_callback(v.flip_to.bind(true, 0.16))
     entries.append({"seat": seat, "card": card, "view": v})

@@ -7,10 +7,14 @@ extends Control
 
 signal play_requested(card: GameCard)
 
+const ACTIVE_LIFT := 84.0
+
 const CARD_W := 240.0
 const CARD_H := 360.0
-const BASE_Y := 1832.0
-const ACTIVE_LIFT := 84.0
+
+
+func _base_y() -> float:
+    return UIH.vsize().y - 88.0 * UIH.us()
 
 var cards: Array[GameCard] = []
 var views: Array[CardView] = []
@@ -70,10 +74,11 @@ func clear_hand() -> void:
 func _slot(i: int, n: int) -> Dictionary:
     var mid := (n - 1) / 2.0
     var d := i - mid
-    var step_x := 64.0 if n <= 1 else clampf((930.0 - CARD_W) / (n - 1), 60.0, 148.0)
+    var cw := CardView.size_px().x
+    var step_x := 64.0 * UIH.us() if n <= 1 else clampf((UIH.vsize().x * 0.86 - cw) / (n - 1), 60.0 * UIH.us(), 148.0 * UIH.us())
     var droop := 0.0 if n <= 1 else minf(2.4, 150.0 / maxf(mid * mid, 1.0))
-    var x := 540.0 + d * step_x
-    var y := BASE_Y + d * d * droop
+    var x := UIH.cx() + d * step_x
+    var y := _base_y() + d * d * droop
     var rot := clampf(d * 0.028, -0.16, 0.16)
     return {"pos": Vector2(x, y), "rot": rot, "z": 100 + i}
 
@@ -113,7 +118,7 @@ func _deal_in() -> void:
     for i in n:
         var v := views[i]
         var s := _slot(i, n)
-        v.position = Vector2(540, 830)
+        v.position = Vector2(UIH.cx(), UIH.vsize().y * 0.43)
         v.scale = Vector2(0.7, 0.7)
         v.rotation = 0.0
         v.visible = false
@@ -142,7 +147,7 @@ func add_cards(p_cards: Array[GameCard]) -> void:
     for j in range(first_idx, views.size()):
         var v := views[j]
         var s := _slot(j, views.size())
-        v.position = Vector2(540, 830)
+        v.position = Vector2(UIH.cx(), UIH.vsize().y * 0.43)
         v.scale = Vector2(0.7, 0.7)
         v.rotation = 0.0
         var t := v.create_tween()
@@ -256,7 +261,7 @@ func _hit_card(p: Vector2) -> int:
     for i in range(views.size() - 1, -1, -1):
         var v := views[i]
         var sc: float = v.scale.x
-        var half := Vector2(CARD_W, CARD_H) * 0.5 * sc
+        var half := CardView.size_px() * 0.5 * sc
         var local := p - v.position
         if absf(local.x) <= half.x and absf(local.y) <= half.y:
             return i
@@ -272,6 +277,11 @@ func _on_press(p: Vector2) -> void:
     if hit >= 0:
         if hit != active_i:
             set_active(hit)
+        else:
+            Snd.sfx("tap", 1.0, -10.0)
+            var v := views[hit]
+            var t := v.create_tween()
+            t.tween_property(v, "scale", Vector2(1.05, 1.05), 0.06)
     else:
         _press_active = false
 
@@ -282,8 +292,10 @@ func _on_motion(p: Vector2) -> void:
     if _drag_mode == 0:
         if absf(dx) > 26.0 and absf(dx) > absf(dy):
             _drag_mode = 1
+            Snd.sfx("swipe", 1.0, -8.0)
         elif dy < -36.0:
             _drag_mode = 2
+            Snd.sfx("card_slide", 1.0, -8.0)
     if _drag_mode == 1:
         var shift := int(-dx / 64.0)
         var target := clampi(_last_active + shift, 0, views.size() - 1)

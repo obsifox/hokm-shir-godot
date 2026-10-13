@@ -16,12 +16,12 @@ func _ready() -> void:
     add_child(UIH.dim_overlay(0.72))
 
     var title := UIH.label("حکم را انتخاب کن", 54, UIH.GOLD, "Black", 6)
-    title.position = Vector2(540 - 300, 320)
+    title.position = Vector2(UIH.cx() - 300, UIH.vsize().y * 0.167)
     title.size = Vector2(600, 70)
     add_child(title)
 
     var sub := UIH.label("روی یکی از کارت‌هایت بزن؛ خال آن حکم می‌شود", 30, UIH.INK, "Medium")
-    sub.position = Vector2(540 - 400, 396)
+    sub.position = Vector2(UIH.cx() - 400, UIH.vsize().y * 0.206)
     sub.size = Vector2(800, 44)
     add_child(sub)
 
@@ -30,16 +30,17 @@ func _ready() -> void:
     for i in n:
         var c := hand[i]
         var holder := Control.new()
-        holder.size = Vector2(240, 360)
-        holder.position = Vector2(540 - (i - mid) * 150.0 - 120.0, 560 + abs(i - mid) * 22.0)
+        var cs := CardView.size_px()
+        holder.size = cs
+        holder.position = Vector2(UIH.cx() - (i - mid) * 150.0 * UIH.us() - cs.x * 0.5, UIH.vsize().y * 0.29 + abs(i - mid) * 22.0 * UIH.us())
         holder.rotation = clampf((i - mid) * 0.06, -0.14, 0.14)
-        holder.pivot_offset = Vector2(120, 180)
+        holder.pivot_offset = cs * 0.5
         add_child(holder)
         var cv := CardView.new(c, false, "res://assets/back_classic.png")
         holder.add_child(cv)
         cv.flip_to(true, 0.25 + 0.08 * i)
         var chip := UIH.pill(GameCard.SUIT_NAMES[c.suit], 24, Color(GameCard.suit_color(c.suit), 0.92))
-        chip.position = Vector2(70, -46)
+        chip.position = Vector2(cs.x * 0.29, -46.0)
         holder.add_child(chip)
         holder.mouse_filter = Control.MOUSE_FILTER_STOP
         holder.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
